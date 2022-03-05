@@ -1,0 +1,6 @@
+{
+  "appId": "com.app.kartrich",
+  "appName": "kartrich",
+  "bundledWebRuntime": false,
+  "webDir": "www"
+}

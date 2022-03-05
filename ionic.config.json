@@ -1,5 +1,7 @@
 {
   "name": "kartrich",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }
