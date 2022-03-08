@@ -11,9 +11,9 @@ import { Subscription } from 'rxjs';
 
 import { ProductsService } from '../../products.service';
 import { Product } from '../../product.model';
-import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
 import { BookingService } from '../../../bookings/booking.service';
 import { AuthService } from '../../../auth/auth.service';
+import { CartProduct } from 'src/app/bookings/cart-product.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -22,9 +22,8 @@ import { AuthService } from '../../../auth/auth.service';
 })
 export class ProductDetailPage implements OnInit, OnDestroy {
   product: Product;
-  isBookable = false;
   isLoading = false;
-  private placeSub: Subscription;
+  private productSub: Subscription;
 
   constructor(
     private navCtrl: NavController,
@@ -46,12 +45,11 @@ export class ProductDetailPage implements OnInit, OnDestroy {
         return;
       }
       this.isLoading = true;
-      this.placeSub = this.productsService
+      this.productSub = this.productsService
         .getProduct(paramMap.get('productId'))
         .subscribe(
           (product) => {
             this.product = product;
-            // this.isBookable = place.userId !== this.authService.userId;
             this.isLoading = false;
           },
           (error) => {
@@ -80,91 +78,40 @@ export class ProductDetailPage implements OnInit, OnDestroy {
       .then((loadingEl) => {
         loadingEl.present();
         console.log('add to cart');
-        this.bookingService
-          .addToCart(
-            this.product.id,
-            this.product.title,
-            this.product.price,
-            this.product.image,
-            '1'
-          )
-          .then(() => {
-            loadingEl.dismiss();
+        this.bookingService.fetchCart().subscribe((cartProducts) => {
+          var cartProduct: CartProduct;
+          cartProducts.forEach((cartProductRes) => {
+            if (cartProductRes.productId === this.product.id) {
+              cartProduct = cartProductRes;
+            }
           });
-      });
-  }
-
-  onBookPlace() {
-    // this.router.navigateByUrl('/places/tabs/home');
-    // this.navCtrl.navigateBack('/places/tabs/home');
-    // this.navCtrl.pop();
-    this.actionSheetCtrl
-      .create({
-        header: 'Choose an Action',
-        buttons: [
-          {
-            text: 'Select Date',
-            handler: () => {
-              this.openBookingModal('select');
-            },
-          },
-          {
-            text: 'Random Date',
-            handler: () => {
-              this.openBookingModal('random');
-            },
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel',
-          },
-        ],
-      })
-      .then((actionSheetEl) => {
-        actionSheetEl.present();
-      });
-  }
-
-  openBookingModal(mode: 'select' | 'random') {
-    console.log(mode);
-    this.modalCtrl
-      .create({
-        component: CreateBookingComponent,
-        componentProps: { selectedPlace: this.product, selectedMode: mode },
-      })
-      .then((modalEl) => {
-        modalEl.present();
-        return modalEl.onDidDismiss();
-      })
-      .then((resultData) => {
-        if (resultData.role === 'confirm') {
-          this.loadingCtrl
-            .create({ message: 'Booking place...' })
-            .then((loadingEl) => {
-              loadingEl.present();
-              const data = resultData.data.bookingData;
-              this.bookingService
-                .addBooking(
-                  this.product.id,
-                  this.product.title,
-                  this.product.image,
-                  data.firstName,
-                  data.lastName,
-                  data.guestNumber,
-                  data.startDate,
-                  data.endDate
-                )
-                .subscribe(() => {
-                  loadingEl.dismiss();
-                });
+          console.log(this.product.id);
+          if (cartProduct) {
+            this.bookingService
+              .updateProductInCart(cartProduct.id, ++cartProduct.quantity)
+              .subscribe(() => {
+                loadingEl.dismiss();
+              });
+            return;
+          }
+          this.bookingService
+            .addToCart(
+              this.product.id,
+              this.product.title,
+              this.product.price,
+              this.product.image,
+              1
+            )
+            .subscribe(() => {
+              loadingEl.dismiss();
             });
-        }
+        });
       });
   }
 
   ngOnDestroy() {
-    if (this.placeSub) {
-      this.placeSub.unsubscribe();
+    if (this.productSub) {
+      this.productSub.unsubscribe();
     }
   }
 }

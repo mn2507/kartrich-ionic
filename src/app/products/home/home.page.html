@@ -11,9 +11,14 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-segment (ionChange)="onFilterUpdate($event)">
-    <ion-segment-button value="all" checked>All Places</ion-segment-button>
-    <ion-segment-button value="bookable">Bookable Places</ion-segment-button>
+  <ion-segment scrollable (ionChange)="onSelectCategory($event)">
+    <ion-segment-button value="all" checked>All</ion-segment-button>
+    <ion-segment-button value="electronics">Electronics</ion-segment-button>
+    <ion-segment-button value="jewelery">Jewelery</ion-segment-button>
+    <ion-segment-button value="menClothing">Men's clothing</ion-segment-button>
+    <ion-segment-button value="womenClothing"
+      >Women's clothing</ion-segment-button
+    >
   </ion-segment>
   <ion-grid *ngIf="isLoading">
     <ion-row>
@@ -23,64 +28,29 @@
     </ion-row>
   </ion-grid>
   <ion-grid
-    *ngIf="!isLoading && (!relevantPlaces || relevantPlaces.length <= 0)"
+    *ngIf="!isLoading && (!selectedCategoryProducts || selectedCategoryProducts.length <= 0)"
   >
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2" text-center>
-        <p>There are no bookable places right now, please come back later!</p>
+        <p>Products could not be loaded. Please try again later!</p>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-grid *ngIf="!isLoading && relevantPlaces.length > 0">
+  <ion-grid *ngIf="!isLoading && selectedCategoryProducts.length > 0">
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2" text-center>
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>{{ relevantPlaces[0].title }}</ion-card-title>
-            <ion-card-subtitle
-              >{{ relevantPlaces[0].price | currency }} /
-              Night</ion-card-subtitle
-            >
-          </ion-card-header>
-          <ion-img [src]="relevantPlaces[0].image"></ion-img>
-          <ion-card-content>
-            <p>{{ relevantPlaces[0].description }}</p>
-          </ion-card-content>
-          <div>
-            <ion-button
-              fill="clear"
-              color="primary"
-              [routerLink]="[
-                '/',
-                'products',
-                'tabs',
-                'home',
-                relevantPlaces[0].id
-              ]"
-            >
-              More
-            </ion-button>
-          </div>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="12" size-sm="8" offset-sm="2" text-center>
-        <ion-virtual-scroll
-          [items]="listedLoadedPlaces"
-          approxItemHeight="70px"
-        >
+        <ion-virtual-scroll [items]="selectedCategoryProducts" approxItemHeight="70px">
           <ion-item
-            [routerLink]="['/', 'products', 'tabs', 'home', place.id]"
+            [routerLink]="['/', 'products', 'tabs', 'home', product.id]"
             detail
-            *virtualItem="let place"
+            *virtualItem="let product"
           >
             <ion-thumbnail slot="start">
-              <ion-img [src]="place.image"></ion-img>
+              <ion-img [src]="product.image"></ion-img>
             </ion-thumbnail>
             <ion-label>
-              <h2>{{ place.title }}</h2>
-              <p>{{ place.description }}</p>
+              <h2>{{ product.title }}</h2>
+              <p>{{ product.price | currency}}</p>
             </ion-label>
           </ion-item>
         </ion-virtual-scroll>

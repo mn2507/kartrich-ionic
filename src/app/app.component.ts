@@ -6,6 +6,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AuthService } from './auth/auth.service';
+import { BookingService } from './bookings/booking.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.initializeApp();
   }
@@ -27,10 +28,5 @@ export class AppComponent {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
-  }
-
-  onLogout() {
-    this.authService.logout();
-    this.router.navigateByUrl('/auth');
   }
 }

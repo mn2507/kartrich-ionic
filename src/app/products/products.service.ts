@@ -7,22 +7,22 @@ import { Product } from './product.model';
 import { AuthService } from '../auth/auth.service';
 
 interface ProductData {
-  availableFrom: string;
-  availableTo: string;
   description: string;
   image: string;
   price: number;
   title: string;
+  category: string;
+  id: string;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
-  private _places = new BehaviorSubject<Product[]>([]);
+  private _products = new BehaviorSubject<Product[]>([]);
 
-  get places() {
-    return this._places.asObservable();
+  get products() {
+    return this._products.asObservable();
   }
 
   constructor(private authService: AuthService, private http: HttpClient) {}
@@ -37,6 +37,7 @@ export class ProductsService {
             new Product(
               resData[key].id,
               resData[key].title,
+              resData[key].category,
               resData[key].description,
               resData[key].image,
               resData[key].price,
@@ -47,7 +48,7 @@ export class ProductsService {
         // return [];
       }),
       tap((places) => {
-        this._places.next(places);
+        this._products.next(places);
       })
     );
   }
@@ -62,6 +63,26 @@ export class ProductsService {
           return new Product(
             id,
             productData.title,
+            productData.category,
+            productData.description,
+            productData.image,
+            productData.price
+          );
+        })
+      );
+  }
+
+  getProductByCategory(category: string) {
+    return this.http
+      .get<ProductData>(
+        `https://fakestoreapi.com/products/category/${category}`
+      )
+      .pipe(
+        map((productData) => {
+          return new Product(
+            productData.id,
+            productData.title,
+            category,
             productData.description,
             productData.image,
             productData.price

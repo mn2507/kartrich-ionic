@@ -12,10 +12,9 @@ import { CartProduct } from './cart-product.model';
   styleUrls: ['./bookings.page.scss']
 })
 export class BookingsPage implements OnInit, OnDestroy {
-  loadedBookings: Booking[];
-  cartProducts: Array<any>;
+  loadedCartProducts: CartProduct[];
   isLoading = false;
-  private bookingSub: Subscription;
+  private cartSubscription: Subscription;
 
   constructor(
     private bookingService: BookingService,
@@ -23,38 +22,40 @@ export class BookingsPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // this.bookingSub = this.bookingService.bookings.subscribe(bookings => {
-    //   this.loadedBookings = bookings;
-    // });
-    this.isLoading = true;
-    this.bookingService.fetchCart().then(() => {
-      this.cartProducts = this.bookingService.CartProducts
-      this.isLoading = false;
-    // });
-    })
+    this.cartSubscription = this.bookingService.cartProducts.subscribe(cartProducts => {
+      this.loadedCartProducts = cartProducts;
+      console.log(cartProducts)
+    });
 
+    // this.isLoading = true;
+    // this.bookingService.fetchCart().then(() => {
+    //   this.cartProducts = this.bookingService.CartProducts
+    //   this.isLoading = false;
+    // // });
+    // })
   }
 
   ionViewWillEnter() {
-    // this.isLoading = true;
-    // this.bookingService.fetchBookings().subscribe(() => {
-    //   this.isLoading = false;
-    // });
+    this.isLoading = true;
+    this.bookingService.fetchCart().subscribe(() => {
+      this.isLoading = false;
+    });
   }
 
-  onCancelBooking(bookingId: string, slidingEl: IonItemSliding) {
+  onRemoveProdFromCart(cartProductId: string, slidingEl: IonItemSliding) {
     slidingEl.close();
-    // this.loadingCtrl.create({ message: 'Cancelling...' }).then(loadingEl => {
-    //   loadingEl.present();
-    //   this.bookingService.cancelBooking(bookingId).subscribe(() => {
-    //     loadingEl.dismiss();
-    //   });
-    // });
+    this.loadingCtrl.create({ message: 'Cancelling...' }).then(loadingEl => {
+      loadingEl.present();
+      this.bookingService.removeProductFromCart(cartProductId).subscribe(() => {
+        loadingEl.dismiss();
+        console.log(cartProductId)
+      });
+    });
   }
 
   ngOnDestroy() {
-    if (this.bookingSub) {
-      this.bookingSub.unsubscribe();
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
     }
   }
 }

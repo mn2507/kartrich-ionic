@@ -16,7 +16,7 @@
       <ion-col
         size-md="6"
         offset-md="3"
-        *ngIf="!isLoading && (!cartProducts || cartProducts.length <= 0)"
+        *ngIf="!isLoading && (!loadedCartProducts || loadedCartProducts.length <= 0)"
         text-center
       >
         <p>Your cart is empty!</p>
@@ -24,10 +24,10 @@
       <ion-col
         size-md="6"
         offset-md="3"
-        *ngIf="!isLoading && cartProducts && cartProducts.length > 0"
+        *ngIf="!isLoading && loadedCartProducts && loadedCartProducts.length > 0"
       >
         <ion-list>
-          <ion-item-sliding *ngFor="let cart of cartProducts" #slidingBooking>
+          <ion-item-sliding *ngFor="let cart of loadedCartProducts" #slidingBooking>
             <ion-item>
               <ion-thumbnail slot="start">
                 <ion-img [src]="cart.image"></ion-img>
@@ -38,7 +38,10 @@
               </ion-label>
             </ion-item>
             <ion-item-options>
-              <ion-item-option color="danger">
+              <ion-item-option
+                color="danger"
+                (click)="onRemoveProdFromCart(cart.id, slidingBooking)"
+              >
                 <ion-icon name="trash" slot="icon-only"></ion-icon>
               </ion-item-option>
             </ion-item-options>

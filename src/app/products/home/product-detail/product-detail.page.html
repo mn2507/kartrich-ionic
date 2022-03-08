@@ -19,12 +19,29 @@
     </ion-row>
     <ion-row>
       <ion-col size-sm="6" offset-sm="3" text-center padding>
+        <h2>{{ product.title }}</h2>
+        <p>{{ product.price | currency}}</p>
         <p>{{ product.description }}</p>
+        <ion-item>
+          <ion-label text-center>Quantity</ion-label>
+          <ion-input
+            type="number"
+            [ngModel]="'1'"
+            name="quantity"
+            required
+            text-center
+          ></ion-input>
+        </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col size-sm="6" offset-sm="3" text-center>
-        <ion-button color="primary" margin (click)="onAddToCart()"
+        <ion-button
+          type="submit"
+          color="primary"
+          margin
+          (click)="onAddToCart()"
+          expand="block"
           >Add to Cart</ion-button
         >
       </ion-col>
