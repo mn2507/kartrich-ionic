@@ -109,6 +109,7 @@ export class ProductDetailPage implements OnInit, OnDestroy {
               )
               .subscribe(() => {
                 loadingEl.dismiss();
+                this.presentToast();
               });
             return;
           }
