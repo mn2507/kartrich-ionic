@@ -29,7 +29,7 @@
         <ion-list>
           <ion-item-sliding
             *ngFor="let cart of loadedCartProducts"
-            #slidingBooking
+            #slidingCart
           >
             <ion-item>
               <ion-thumbnail slot="start">
@@ -63,7 +63,7 @@
             <ion-item-options>
               <ion-item-option
                 color="danger"
-                (click)="onRemoveProdFromCart(cart.id, slidingBooking)"
+                (click)="onRemoveProdFromCart(cart.id, slidingCart)"
               >
                 <ion-icon name="trash" slot="icon-only"></ion-icon>
               </ion-item-option>

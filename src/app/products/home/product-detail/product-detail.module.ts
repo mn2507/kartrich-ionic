@@ -6,8 +6,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { ProductDetailPage } from './product-detail.page';
-import { CreateBookingComponent } from '../../../bookings/create-booking/create-booking.component';
-
 const routes: Routes = [
   {
     path: '',
@@ -23,7 +21,6 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [ProductDetailPage, CreateBookingComponent],
-  entryComponents: [CreateBookingComponent]
+  declarations: [ProductDetailPage]
 })
 export class ProductDetailPageModule {}

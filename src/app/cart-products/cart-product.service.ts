@@ -12,7 +12,7 @@ interface CartProductData {
   quantity: number;
 }
 @Injectable({ providedIn: 'root' })
-export class BookingService {
+export class CartProductService {
   private _cartProducts = new BehaviorSubject<CartProduct[]>([]);
 
   get cartProducts() {
@@ -107,20 +107,20 @@ export class BookingService {
     let updatedCartProduct: CartProduct[];
     return this.cartProducts.pipe(
       take(1),
-      switchMap((places) => {
-        if (!places || places.length <= 0) {
+      switchMap((product) => {
+        if (!product || product.length <= 0) {
           return this.fetchCart();
         } else {
-          return of(places);
+          return of(product);
         }
       }),
       switchMap((products) => {
-        const updatedPlaceIndex = products.findIndex(
+        const updatedProductIndex = products.findIndex(
           (pl) => pl.id === productId
         );
         updatedCartProduct = [...products];
-        const oldCartProduct = updatedCartProduct[updatedPlaceIndex];
-        updatedCartProduct[updatedPlaceIndex] = new CartProduct(
+        const oldCartProduct = updatedCartProduct[updatedProductIndex];
+        updatedCartProduct[updatedProductIndex] = new CartProduct(
           oldCartProduct.id,
           oldCartProduct.productId,
           oldCartProduct.title,
@@ -130,7 +130,7 @@ export class BookingService {
         );
         return this.http.put(
           `https://kartrich-ionic-default-rtdb.asia-southeast1.firebasedatabase.app/cart/${productId}.json`,
-          { ...updatedCartProduct[updatedPlaceIndex], id: null }
+          { ...updatedCartProduct[updatedProductIndex], id: null }
         );
       }),
       tap(() => {

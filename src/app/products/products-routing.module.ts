@@ -23,8 +23,8 @@ const routes: Routes = [
         ],
       },
       {
-        path: 'bookings',
-        loadChildren: './../bookings/bookings.module#BookingsPageModule',
+        path: 'cartProducts',
+        loadChildren: './../cart-products/cart-products.module#CartProductsPageModule',
       },
       {
         path: '',

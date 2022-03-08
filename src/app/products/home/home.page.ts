@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 
 import { ProductsService } from '../products.service';
 import { Product } from '../product.model';
-import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -20,8 +19,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   constructor(
     private productsService: ProductsService,
-    private menuCtrl: MenuController,
-    private authService: AuthService
+    private menuCtrl: MenuController
   ) {}
 
   ngOnInit() {

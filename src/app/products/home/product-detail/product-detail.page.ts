@@ -10,8 +10,8 @@ import { Subscription } from 'rxjs';
 
 import { ProductsService } from '../../products.service';
 import { Product } from '../../product.model';
-import { BookingService } from '../../../bookings/booking.service';
-import { CartProduct } from 'src/app/bookings/cart-product.model';
+import { CartProductService } from '../../../cart-products/cart-product.service';
+import { CartProduct } from 'src/app/cart-products/cart-product.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -29,11 +29,11 @@ export class ProductDetailPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private route: ActivatedRoute,
     private productsService: ProductsService,
-    private bookingService: BookingService,
+    private cartProductService: CartProductService,
     private loadingCtrl: LoadingController,
     private alertCtrl: AlertController,
     private router: Router,
-    private toastController: ToastController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -82,7 +82,7 @@ export class ProductDetailPage implements OnInit, OnDestroy {
   async presentToast() {
     const toast = await this.toastController.create({
       message: 'Product added to cart.',
-      duration: 1000
+      duration: 1000,
     });
     toast.present();
   }
@@ -93,7 +93,7 @@ export class ProductDetailPage implements OnInit, OnDestroy {
       .then((loadingEl) => {
         loadingEl.present();
         console.log('add to cart');
-        this.bookingService.fetchCart().subscribe((cartProducts) => {
+        this.cartProductService.fetchCart().subscribe((cartProducts) => {
           var cartProduct: CartProduct;
           cartProducts.forEach((cartProductRes) => {
             if (cartProductRes.productId === this.product.id) {
@@ -102,7 +102,7 @@ export class ProductDetailPage implements OnInit, OnDestroy {
           });
           console.log(this.product.id);
           if (cartProduct) {
-            this.bookingService
+            this.cartProductService
               .updateProductInCart(
                 cartProduct.id,
                 cartProduct.quantity + +this.form.value.quantity
@@ -113,7 +113,7 @@ export class ProductDetailPage implements OnInit, OnDestroy {
               });
             return;
           }
-          this.bookingService
+          this.cartProductService
             .addToCart(
               this.product.id,
               this.product.title,
