@@ -1,20 +1,18 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   NavController,
-  ModalController,
-  ActionSheetController,
   LoadingController,
   AlertController,
+  ToastController,
 } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 import { ProductsService } from '../../products.service';
 import { Product } from '../../product.model';
 import { BookingService } from '../../../bookings/booking.service';
-import { AuthService } from '../../../auth/auth.service';
 import { CartProduct } from 'src/app/bookings/cart-product.model';
-import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-product-detail',
@@ -31,13 +29,11 @@ export class ProductDetailPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private route: ActivatedRoute,
     private productsService: ProductsService,
-    private modalCtrl: ModalController,
-    private actionSheetCtrl: ActionSheetController,
     private bookingService: BookingService,
     private loadingCtrl: LoadingController,
-    private authService: AuthService,
     private alertCtrl: AlertController,
-    private router: Router
+    private router: Router,
+    private toastController: ToastController,
   ) {}
 
   ngOnInit() {
@@ -83,6 +79,14 @@ export class ProductDetailPage implements OnInit, OnDestroy {
     });
   }
 
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'Product added to cart.',
+      duration: 1000
+    });
+    toast.present();
+  }
+
   onAddToCart() {
     this.loadingCtrl
       .create({ message: 'Adding product to cart...' })
@@ -118,6 +122,7 @@ export class ProductDetailPage implements OnInit, OnDestroy {
             )
             .subscribe(() => {
               loadingEl.dismiss();
+              this.presentToast();
             });
         });
       });
