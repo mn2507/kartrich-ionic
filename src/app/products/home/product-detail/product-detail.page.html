@@ -22,16 +22,17 @@
         <h2>{{ product.title }}</h2>
         <p>{{ product.price | currency}}</p>
         <p>{{ product.description }}</p>
-        <ion-item>
-          <ion-label text-center>Quantity</ion-label>
-          <ion-input
-            type="number"
-            [ngModel]="'1'"
-            name="quantity"
-            required
-            text-center
-          ></ion-input>
-        </ion-item>
+        <form [formGroup]="form">
+          <ion-item>
+            <ion-label text-center>Quantity</ion-label>
+            <ion-input
+              type="number"
+              formControlName="quantity"
+              required
+              text-center
+            ></ion-input>
+          </ion-item>
+        </form>
       </ion-col>
     </ion-row>
     <ion-row>

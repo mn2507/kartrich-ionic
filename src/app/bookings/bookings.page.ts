@@ -9,7 +9,7 @@ import { CartProduct } from './cart-product.model';
 @Component({
   selector: 'app-bookings',
   templateUrl: './bookings.page.html',
-  styleUrls: ['./bookings.page.scss']
+  styleUrls: ['./bookings.page.scss'],
 })
 export class BookingsPage implements OnInit, OnDestroy {
   loadedCartProducts: CartProduct[];
@@ -22,17 +22,12 @@ export class BookingsPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.cartSubscription = this.bookingService.cartProducts.subscribe(cartProducts => {
-      this.loadedCartProducts = cartProducts;
-      console.log(cartProducts)
-    });
-
-    // this.isLoading = true;
-    // this.bookingService.fetchCart().then(() => {
-    //   this.cartProducts = this.bookingService.CartProducts
-    //   this.isLoading = false;
-    // // });
-    // })
+    this.cartSubscription = this.bookingService.cartProducts.subscribe(
+      (cartProducts) => {
+        this.loadedCartProducts = cartProducts;
+        console.log(cartProducts);
+      }
+    );
   }
 
   ionViewWillEnter() {
@@ -44,13 +39,45 @@ export class BookingsPage implements OnInit, OnDestroy {
 
   onRemoveProdFromCart(cartProductId: string, slidingEl: IonItemSliding) {
     slidingEl.close();
-    this.loadingCtrl.create({ message: 'Cancelling...' }).then(loadingEl => {
-      loadingEl.present();
-      this.bookingService.removeProductFromCart(cartProductId).subscribe(() => {
-        loadingEl.dismiss();
-        console.log(cartProductId)
+    this.loadingCtrl
+      .create({ message: 'Removing product...' })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.bookingService
+          .removeProductFromCart(cartProductId)
+          .subscribe(() => {
+            loadingEl.dismiss();
+            console.log(cartProductId);
+          });
       });
-    });
+  }
+
+  onReduceQuantity(cartProductId: string, cartProductCurrentQty: number) {
+    this.loadingCtrl
+      .create({ message: 'Updating quantity...' })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.bookingService
+          .updateProductInCart(cartProductId, cartProductCurrentQty - 1)
+          .subscribe(() => {
+            loadingEl.dismiss();
+            console.log(cartProductId);
+          });
+      });
+  }
+
+  onIncreaseQuantity(cartProductId: string, cartProductCurrentQty: number) {
+    this.loadingCtrl
+      .create({ message: 'Updating quantity...' })
+      .then((loadingEl) => {
+        loadingEl.present();
+        this.bookingService
+          .updateProductInCart(cartProductId, cartProductCurrentQty + 1)
+          .subscribe(() => {
+            loadingEl.dismiss();
+            console.log(cartProductId);
+          });
+      });
   }
 
   ngOnDestroy() {

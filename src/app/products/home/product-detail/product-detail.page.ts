@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   NavController,
@@ -14,6 +14,7 @@ import { Product } from '../../product.model';
 import { BookingService } from '../../../bookings/booking.service';
 import { AuthService } from '../../../auth/auth.service';
 import { CartProduct } from 'src/app/bookings/cart-product.model';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-product-detail',
@@ -23,6 +24,7 @@ import { CartProduct } from 'src/app/bookings/cart-product.model';
 export class ProductDetailPage implements OnInit, OnDestroy {
   product: Product;
   isLoading = false;
+  form: FormGroup;
   private productSub: Subscription;
 
   constructor(
@@ -39,6 +41,15 @@ export class ProductDetailPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    // Create form
+    this.form = new FormGroup({
+      quantity: new FormControl(1, {
+        updateOn: 'blur',
+        validators: [Validators.required, Validators.min(1)],
+      }),
+    });
+
+    // Call single product API
     this.route.paramMap.subscribe((paramMap) => {
       if (!paramMap.has('productId')) {
         this.navCtrl.navigateBack('/products/tabs/home');
@@ -88,7 +99,10 @@ export class ProductDetailPage implements OnInit, OnDestroy {
           console.log(this.product.id);
           if (cartProduct) {
             this.bookingService
-              .updateProductInCart(cartProduct.id, ++cartProduct.quantity)
+              .updateProductInCart(
+                cartProduct.id,
+                cartProduct.quantity + +this.form.value.quantity
+              )
               .subscribe(() => {
                 loadingEl.dismiss();
               });
@@ -100,7 +114,7 @@ export class ProductDetailPage implements OnInit, OnDestroy {
               this.product.title,
               this.product.price,
               this.product.image,
-              1
+              +this.form.value.quantity
             )
             .subscribe(() => {
               loadingEl.dismiss();
